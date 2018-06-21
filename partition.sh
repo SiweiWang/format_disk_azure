@@ -46,7 +46,7 @@ add_to_fstab() {
     then
         echo "Not adding ${UUID} to fstab again (it's already there!)"
     else
-        LINE="UUID=\"${UUID}\"\t${MOUNTPOINT}\text4\tnoatime,nodiratime,nodev,noexec,nosuid\t1 2"
+        LINE="UUID=\"${UUID}\"\t${MOUNTPOINT}\txfs\tnoatime,nodiratime,nodev,noexec,nosuid\t1 2"
         echo -e "${LINE}" >> /etc/fstab
     fi
 }
@@ -95,6 +95,9 @@ else
     DISKS=("${@}")
 fi
 echo "Disks are ${DISKS[@]}"
+
+mkdir -p ${DATA_BASE}
+
 for DISK in "${DISKS[@]}";
 do
     echo "Working on ${DISK}"
@@ -111,7 +114,7 @@ do
         echo "Creating filesystem on ${PARTITION}."
         #echo "Press Ctrl-C if you don't want to destroy all data on ${PARTITION}"
         #sleep 5
-        mkfs -j -t ext4 ${PARTITION}
+        mkfs.xfs ${PARTITION}
     fi
     MOUNTPOINT=$(get_next_mountpoint)
     echo "Next mount point appears to be ${MOUNTPOINT}"
